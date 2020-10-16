@@ -68,10 +68,10 @@ const saveRegistration = async (bvnVerification) => {
 };
 
 router.post('/', async (req, res) => {
-  const { bvn, email, phoneNumber } = req.body;
+  const { bvn } = req.body;
 
   // TODO validate this with the API spec instead
-  if (!bvn || !email || !phoneNumber) {
+  if (!bvn) {
     res.status(400).json({
       message: 'Bad request. Pls provide required/valid request data'
     });
