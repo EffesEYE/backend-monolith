@@ -2,23 +2,33 @@
   "name": "backend-monolith",
   "version": "1.0.0",
   "description": "[![Maintainability](https://api.codeclimate.com/v1/badges/65dacf6644419b2be9da/maintainability)](https://codeclimate.com/repos/5f88e42d463af8018c002d22/maintainability)",
-  "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "start": "NODE_ENV=development nodemon --exec babel-node ./src/index.js"
+    "start": "npx babel src --out-dir dist && node ./dist/index.js",
+    "start:dev": "NODE_ENV=development nodemon --exec babel-node ./src/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/EffesEYE/backend-monolith.git"
   },
   "keywords": [],
-  "author": "",
+  "engines": {
+    "node": "10.x"
+  },
+  "author": {
+    "name": "Charles Odili",
+    "email": "chaluwa@gmail.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/EffesEYE/backend-monolith/issues"
   },
   "homepage": "https://github.com/EffesEYE/backend-monolith#readme",
   "dependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.1",
+    "@babel/node": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -26,13 +36,12 @@
     "innovation-sandbox": "^1.3.1",
     "ioredis": "^4.17.3",
     "jest-openapi": "^0.10.0",
+    "mysql2": "^2.2.5",
     "openapi-validator-middleware": "^3.1.1",
+    "sequelize": "^6.3.5",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.1",
-    "@babel/node": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
