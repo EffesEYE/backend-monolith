@@ -1,7 +1,6 @@
 import cors from 'cors';
 import express from 'express';
 import pino from 'express-pino-logger';
-
 import endpoints from './endpoints';
 
 const app = express();
