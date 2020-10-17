@@ -30,10 +30,12 @@ app.use(
 app.use('/register', endpoints.register);
 
 const defaultResponse = 'Welcome to the EffesEYE API. Consult the documentation';
-app.get('/', (req, res) => res.status(200).send(defaultResponse));
-app.post('/', (req, res) => res.status(200).send(defaultResponse));
-app.get('/ping', (req, res) => res.status(200).send(`EffesEYE API: ${new Date()}`));
-app.post('/ping', (req, res) => res.status(200).send(`EffesEYE API: ${new Date()}`));
+app.get('/', (req, res) => res.status(200).send({ message: defaultResponse }));
+app.post('/', (req, res) => res.status(200).send({ message: defaultResponse }));
+app.get('/ping', (req, res) => res.status(200).send({ message: `EffesEYE API: ${new Date()}` }));
+app.post('/ping', (req, res) => res.status(200).send({ message: `EffesEYE API: ${new Date()}` }));
+app.get('*', (req, res) => res.status(400).json({ message: 'Invalid Destination' }));
+app.post('*', (req, res) => res.status(400).json({ message: 'Invalid Destination' }));
 
 app.use((err, req, res, next) => {
   // TODO log this to the API monitoring service
