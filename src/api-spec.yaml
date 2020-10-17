@@ -1,0 +1,325 @@
+openapi: 3.0.0
+info:
+  title: EffesEYE MVP API
+  version: '1.0'
+  contact:
+    email: chaluwa@gmail.com
+    name: Charles Odili
+    url: charlesodili.rocks
+  license:
+    name: MIT
+  description: The EffesEYE MVP API
+  termsOfService: https://effeseye.herokuapp.com/tc
+servers:
+  - url: 'https://effeseye.herokuapp.com'
+    description: Prod
+paths:
+  /airtime/recharge:
+    post:
+      summary: Buy airtime
+      tags:
+        - airtime
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirtimeRechargeResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirtimeRechargeResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirtimeRechargeError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirtimeRechargeError'
+      operationId: post-airtime-recharge
+      description: buy airtime credit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AirtimeRechargeRequest'
+            examples: {}
+      security:
+        - API-KEY: []
+      parameters: []
+    parameters: []
+  '/airtime/recharge/{requestId}':
+    parameters:
+      - schema:
+          type: string
+        name: requestId
+        in: path
+        required: true
+        description: The request id of a previous airtime recharge request
+    get:
+      summary: get-airtime-recharge-status
+      tags:
+        - airtime
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirtimeRechargeResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirtimeRechargeError'
+      operationId: get-airtime-recharge-requestId
+      description: Query the status of an airtime recharge request using its request id
+      security:
+        - API-KEY: []
+  /register:
+    post:
+      summary: register-app-user
+      tags:
+        - BVN
+        - email
+        - phone number
+        - registration
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountRegistrationResponse'
+              examples: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountRegistrationResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountRegistrationResponse'
+      operationId: post-register
+      description: Create a new user account on the EffesEYE platform
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bvn:
+                  type: string
+                  minLength: 11
+                  maxLength: 11
+                pswd:
+                  type: string
+                  minLength: 6
+                  format: password
+                email:
+                  type: string
+                  format: email
+              required:
+                - bvn
+                - pswd
+                - email
+        description: The HTTP request payload containing the data needed to create the new account
+    parameters: []
+components:
+  schemas:
+    AirtimeRechargeResponse:
+      title: AirtimeRechargeResponse
+      type: object
+      description: 'HTTP response payload from an airtime recharge request. The `amount`, `currency`, `network`, `sendTo`, and `requestedBy` fields are only present when responding to a `GET` request since `POST` requests will already have such data.'
+      x-tags:
+        - airtime
+      x-examples:
+        successful-recharge:
+          message: recharge successful
+          requestId: dfd-453533-5gfds-453453453
+          recharged: true
+          requestStatus: DONE
+        failed-recharge:
+          message: recharge failed
+          requestId: dfsd-4534534535-gfd5-5435345353
+          recharged: false
+          requestStatus: DONE
+        pending-recharge:
+          message: pending recharge
+          requestId: 543-fgdt45-534534535-534535
+          recharged: false
+          requestStatus: IN-PROGRESS
+      properties:
+        message:
+          type: string
+          description: a message describing the status or progress of the airtime recharge request
+        requestId:
+          type: string
+          description: 'The id of the request. Can be handy when the request needs to be querried in the future e.g to see if the status has changed, or to build a transaction history.'
+        recharged:
+          type: boolean
+          description: Indicates if the recharge was successful (true) or not (false)
+        requestStatus:
+          type: string
+          enum:
+            - DONE
+            - IN-PROGRESS
+          description: The status for the airtime recharge request. Can either be DONE or IN-PROGRESS
+        amount:
+          type: integer
+          description: 'The airtime recharge amount, between 100 and 10,000 in specified currency'
+          minimum: 100
+          maximum: 10000
+        currency:
+          type: string
+          enum:
+            - NGN
+          description: 'The ISO-xx formatted currency of `amount` for the airtime purchase '
+        network:
+          type: string
+          enum:
+            - MTN
+            - Airtel
+            - Glo
+            - 9Mobile
+          description: The network provider whose airtime is being purchased
+        sendTo:
+          type: string
+          description: The phone number to credit the aritime to
+        requestedBy:
+          type: string
+          description: The phone number requesting the airtime recharge
+        accountToDebit:
+          type: string
+          description: Verified bank account to debit
+      required:
+        - message
+        - requestId
+        - recharged
+        - requestStatus
+    AirtimeRechargeRequest:
+      title: AirtimeRechargeRequest
+      type: object
+      x-tags:
+        - airtime
+      description: 'The HTTP request payload for an airtime recharge request. If the optional `network` field is not specified, it is inferred from the `requestedBy` phone number'
+      properties:
+        amount:
+          type: integer
+          description: 'The airtime recharge amount, between 100 and 10,000 in specified currency'
+          minimum: 100
+          maximum: 10000
+        currency:
+          type: string
+          enum:
+            - NGN
+          description: 'The ISO-xx formatted currency of `amount` for the airtime purchase '
+        network:
+          type: string
+          enum:
+            - MTN
+            - Airtel
+            - Glo
+            - 9Mobile
+          description: The network provider whose airtime is being purchased
+        sendTo:
+          type: string
+          description: The phone number to credit the aritime to
+        requestedBy:
+          type: string
+          description: The phone number requesting the airtime recharge
+        accountToDebit:
+          type: string
+          description: Verified bank account to debit
+      required:
+        - amount
+        - currency
+        - sendTo
+        - requestedBy
+        - accountToDebit
+    AirtimeRechargeError:
+      title: AirtimeRechargeError
+      type: object
+      description: The HTTP response payload for filed airtime recharge requests
+      properties:
+        message:
+          type: string
+          description: description of error
+        requestId:
+          type: string
+          description: The ID of the airtime recharge request
+        statusCode:
+          type: string
+          description: 'The corresponsding HTTP status code. E.g `401` if the required secuirty headers are absent, or `500` for a server / service error'
+      required:
+        - message
+        - requestId
+        - statusCode
+    AccountRegistrationRequest:
+      title: AccountRegistrationRequest
+      type: object
+      description: The HTTP palyload for a new account registration on the EffesEYE platform
+      x-tags:
+        - BVN
+        - email
+        - phone number
+        - registration
+      properties:
+        bvn:
+          type: string
+          minLength: 11
+          maxLength: 11
+          description: The unique Bank Verification Number (BVN) of the new user
+        pswd:
+          type: string
+          minLength: 6
+          description: The user's password
+          format: password
+        email:
+          type: string
+          format: email
+          description: The user's email address
+      required:
+        - bvn
+        - pswd
+        - email
+    AccountRegistrationResponse:
+      title: AccountRegistrationResponse
+      type: object
+      description: The HTTP response payload for account registration requests
+      x-tags:
+        - registration
+        - BVN
+      properties:
+        message:
+          type: string
+          description: A status message on the registration request
+        accountId:
+          type: string
+          description: The account ID of the successfully registered user. Only present on succcessful registration
+      required:
+        - message
+  securitySchemes:
+    API-KEY:
+      name: EFFESEYE-API-KEY
+      type: apiKey
+      in: header
+tags:
+  - name: airtime
+  - name: BVN
+  - name: email
+  - name: phone number
+  - name: registration

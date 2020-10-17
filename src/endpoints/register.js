@@ -76,15 +76,15 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
   return accountId;
 };
 
-router.post('/', async (req, res) => {
+const registerEndpoint = async (req, res) => {
   const { bvn, pswd, email } = req.body;
 
-  // TODO validate this with the API spec instead
-  if (!bvn || !pswd || !email) {
-    res.status(400).json({
-      message: 'Bad request. Pls provide required/valid request data'
-    });
-  }
+  // // TODO validate this with the API spec instead
+  // if (!bvn || !pswd || !email) {
+  //   res.status(400).json({
+  //     message: 'Bad request. Pls provide required/valid request data'
+  //   });
+  // }
 
   try {
     const { ivkey, aes_key: aesKey, password } = await getNIBSSCredentials();
@@ -107,6 +107,10 @@ router.post('/', async (req, res) => {
       message: 'Unable to handle your request. Pls try again or contact support'
     });
   }
-});
+};
 
-export default router;
+export default (API) => {
+  router.post('/', API.validate, registerEndpoint);
+
+  return router;
+};

@@ -1,11 +1,6 @@
 import app from './app';
 
-const runEffesEYE = () => {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`EffesEYE Server Running On: ${PORT}`);
-  });
-};
+const runEffesEYE = () => app.listen(process.env.PORT || 3000);
 
 export default {
   run: runEffesEYE
