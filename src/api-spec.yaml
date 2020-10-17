@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: EffesEYE MVP API
-  version: '1.0'
+  title: EffesEYE API
+  version: 2020-10
   contact:
     email: chaluwa@gmail.com
     name: Charles Odili
@@ -85,7 +85,7 @@ paths:
       description: Query the status of an airtime recharge request using its request id
       security:
         - API-KEY: []
-  /register:
+  '/{version}/register':
     post:
       summary: register-app-user
       tags:
@@ -121,7 +121,90 @@ paths:
             schema:
               $ref: '#/components/schemas/AccountRegistrationRequest'
         description: The HTTP request payload containing the data needed to create the new account
-    parameters: []
+    parameters:
+      - schema:
+          type: string
+          example: 2020-10
+          minLength: 7
+          maxLength: 7
+        name: version
+        in: path
+        required: true
+        description: The API version
+  '/{version}/ping':
+    get:
+      summary: Get the server's pulse
+      tags:
+        - ping
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PulseResponse'
+      operationId: get-ping
+      description: Get a pulse of the server
+    post:
+      summary: Get the server's pulse
+      tags:
+        - ping
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PulseResponse'
+      operationId: post-ping
+      description: Get a pulse of the server
+    parameters:
+      - schema:
+          type: string
+          minLength: 7
+          maxLength: 7
+          example: 2020-10
+        name: version
+        in: path
+        required: true
+        description: The API version
+  '/{version}':
+    get:
+      summary: A catch all / fall-back endpoint
+      tags:
+        - ping
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PulseResponse'
+      operationId: get
+      description: A catch all / fall-back endpoint
+    post:
+      summary: A catch all / fall-back endpoint
+      tags:
+        - ping
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PulseResponse'
+      operationId: post
+      description: A catch all / fall-back endpoint
+    parameters:
+      - schema:
+          type: string
+          example: 2020-10
+          minLength: 7
+          maxLength: 7
+        name: version
+        in: path
+        description: The API version
+        required: true
 components:
   schemas:
     AirtimeRechargeResponse:
@@ -297,6 +380,16 @@ components:
           description: The account ID of the successfully registered user. Only present on succcessful registration
       required:
         - message
+    PulseResponse:
+      title: PulseResponse
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message from the server
+      required:
+        - message
+      description: A pulse response from the EffesEYE API server
   securitySchemes:
     API-KEY:
       name: EFFESEYE-API-KEY
@@ -308,3 +401,4 @@ tags:
   - name: email
   - name: phone number
   - name: registration
+  - name: ping
