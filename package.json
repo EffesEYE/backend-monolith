@@ -4,7 +4,7 @@
   "description": "[![Maintainability](https://api.codeclimate.com/v1/badges/65dacf6644419b2be9da/maintainability)](https://codeclimate.com/repos/5f88e42d463af8018c002d22/maintainability)",
   "scripts": {
     "test": "jest --coverage",
-    "start": "npx sequelize db:migrate && npx sequelize db:seed:all && npx babel src --out-dir dist && NODE_ENV=development node ./dist/index.js",
+    "start": "npx sequelize db:migrate && npx babel src --out-dir dist && node ./dist/index.js",
     "start:dev": "npx sequelize db:migrate && NODE_ENV=development nodemon --exec babel-node ./src/index.js"
   },
   "repository": {
