@@ -5,6 +5,7 @@ import { nibss } from 'innovation-sandbox';
 import DB from '../data/db/models';
 import redis from '../data/redis-store';
 import errors from '../commons/errors';
+import { hashPswd } from '../commons/auth';
 
 const router = Router();
 const { NIBSSError } = errors;
@@ -60,7 +61,6 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
     BVN, FirstName, MiddleName, LastName, PhoneNumber
   } = bvnVerification;
 
-  // TODO hash the password
   const accountId = uuid();
   await DB.User.create({
     email,
@@ -94,7 +94,8 @@ router.post('/', async (req, res) => {
       password,
       bvn
     });
-    const accountId = await createUserAccount(verification, email, pswd);
+    const hashedPswd = await hashPswd(pswd);
+    const accountId = await createUserAccount(verification, email, hashedPswd);
 
     res.json({
       accountId,
