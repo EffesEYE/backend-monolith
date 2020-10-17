@@ -2,10 +2,12 @@ import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import { nibss } from 'innovation-sandbox';
 
+import DB from '../data/db/models';
 import redis from '../data/redis-store';
-import { NIBSSError } from '../commons/errors';
+import errors from '../commons/errors';
 
 const router = Router();
+const { NIBSSError } = errors;
 
 const generateNIBSSCredentials = async () => {
   const credentials = await nibss.Bvnr.Reset({
@@ -39,7 +41,9 @@ const getNIBSSCredentials = async () => {
 };
 
 const verifyBVN = async (data) => {
-  const { ivkey, aes_key: aesKey, password, bvn } = data;
+  const {
+    ivkey, aes_key: aesKey, password, bvn
+  } = data;
   const verification = await nibss.Bvnr.VerifySingleBVN({
     bvn,
     ivkey,
@@ -51,27 +55,32 @@ const verifyBVN = async (data) => {
   return verification;
 };
 
-// TODO save verification to DB
-const saveRegistration = async (bvnVerification) => {
-  // BVN": "12345678901",
-  // "FirstName": "Uchenna",
-  // "MiddleName": "Chijioke",
-  // "LastName": "Nwanyanwu",
-  // "DateOfBirth": "22-Oct-1970",
-  // "PhoneNumber": "07033333333",
-  // "RegistrationDate": "16-Nov-2014",
-  // "EnrollmentBank": "900",
-  // "EnrollmentBranch": "Victoria Island",
-  // "WatchListed": "NO"
+const createUserAccount = async (bvnVerification, email, pswd) => {
+  const {
+    BVN, FirstName, MiddleName, LastName, PhoneNumber
+  } = bvnVerification;
 
-  return uuid();
+  // TODO hash the password
+  const accountId = uuid();
+  await DB.User.create({
+    email,
+    bvn: BVN,
+    accounttype: 'USER',
+    lastname: LastName,
+    phone: PhoneNumber,
+    hashedpassword: pswd,
+    accountid: accountId,
+    firstname: FirstName,
+    middlename: MiddleName
+  });
+  return accountId;
 };
 
 router.post('/', async (req, res) => {
-  const { bvn } = req.body;
+  const { bvn, pswd, email } = req.body;
 
   // TODO validate this with the API spec instead
-  if (!bvn) {
+  if (!bvn || !pswd || !email) {
     res.status(400).json({
       message: 'Bad request. Pls provide required/valid request data'
     });
@@ -79,13 +88,13 @@ router.post('/', async (req, res) => {
 
   try {
     const { ivkey, aes_key: aesKey, password } = await getNIBSSCredentials();
-    const verification = await verifyBVN({
+    const { data: verification } = await verifyBVN({
       ivkey,
       aes_key: aesKey,
       password,
       bvn
     });
-    const accountId = await saveRegistration(verification);
+    const accountId = await createUserAccount(verification, email, pswd);
 
     res.json({
       accountId,
@@ -94,7 +103,7 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: 'Unable to handle your request. Pls contant support'
+      message: 'Unable to handle your request. Pls try again or contact support'
     });
   }
 });
