@@ -1,30 +1,33 @@
 import cors from 'cors';
+import path from 'path';
 import express from 'express';
 import moesif from 'moesif-nodejs';
 import pino from 'express-pino-logger';
+import * as APIValidator from 'express-openapi-validator';
 
-import { apiSpec, API, endpoints } from './endpoints';
+import endpoints from './endpoints';
 
 // TODO add API versioning
 const app = express();
 
-// Setup middlewares
 const apiMonitor = moesif({
   applicationId: process.env.MOESIFID
 });
 
+const apiSpec = path.join(__dirname, 'api-spec.yaml');
 app.use('/spec', express.static(apiSpec));
 app.use(cors());
-// app.use(apiMonitor);
+app.use(apiMonitor);
 app.use(express.json());
 app.use(pino({ useLevel: 'info' }));
-// Done with middlewares
+app.use(
+  APIValidator.middleware({
+    apiSpec,
+    validateRequests: true
+  })
+);
 
-// app.use('/register', endpoints.register);
-app.post('/register', API.validate, (req, res) => {
-  console.log('reached validated endpoint!');
-  res.json({ message: 'done' });
-});
+app.use('/register', endpoints.register);
 
 const defaultResponse = 'Welcome to the EffesEYE API. Consult the documentation';
 app.get('/', (req, res) => res.status(200).send(defaultResponse));
@@ -32,10 +35,11 @@ app.post('/', (req, res) => res.status(200).send(defaultResponse));
 app.get('/ping', (req, res) => res.status(200).send(`EffesEYE API: ${new Date()}`));
 app.post('/ping', (req, res) => res.status(200).send(`EffesEYE API: ${new Date()}`));
 
-app.use((err, req, res) => {
-  if (err instanceof API.InputValidationError) {
-    return res.status(400).json({ info: JSON.stringify(err.errors) });
-  }
+app.use((err, req, res, next) => {
+  // TODO log this to the API monitoring service
+  res.status(err.status || 500).json({
+    message: err.message
+  });
 });
 
 export default app;

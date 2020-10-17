@@ -79,13 +79,6 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
 const registerEndpoint = async (req, res) => {
   const { bvn, pswd, email } = req.body;
 
-  // // TODO validate this with the API spec instead
-  // if (!bvn || !pswd || !email) {
-  //   res.status(400).json({
-  //     message: 'Bad request. Pls provide required/valid request data'
-  //   });
-  // }
-
   try {
     const { ivkey, aes_key: aesKey, password } = await getNIBSSCredentials();
     const { data: verification } = await verifyBVN({
@@ -109,8 +102,6 @@ const registerEndpoint = async (req, res) => {
   }
 };
 
-export default (API) => {
-  router.post('/', API.validate, registerEndpoint);
+router.post('/', registerEndpoint);
 
-  return router;
-};
+export default router;
