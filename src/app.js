@@ -1,13 +1,20 @@
 import cors from 'cors';
 import express from 'express';
+import moesif from 'moesif-nodejs';
 import pino from 'express-pino-logger';
+
 import endpoints from './endpoints';
 
-const app = express();
+// Setup middlewares
+const apiMonitor = moesif({
+  applicationId: process.env.MOESIFID
+});
 
+const app = express();
 app.use(cors());
+app.use(apiMonitor);
 app.use(express.json());
-// app.use(pino());
+app.use(pino({ useLevel: 'error' }));
 
 app.use('/register', endpoints.register);
 
