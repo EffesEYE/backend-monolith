@@ -14,7 +14,7 @@ const app = express();
 app.use(cors());
 app.use(apiMonitor);
 app.use(express.json());
-// app.use(pino());
+app.use(pino({ useLevel: 'error' }));
 
 app.use('/register', endpoints.register);
 
