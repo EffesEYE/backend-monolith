@@ -12,8 +12,8 @@ const { NIBSSError } = errors;
 
 const generateNIBSSCredentials = async () => {
   const credentials = await nibss.Bvnr.Reset({
-    sandbox_key: process.env.SANDBOXKEY,
-    organisation_code: process.env.NIBSSOrganisationCode
+    sandbox_key: process.env.SANDBOX_KEY,
+    organisation_code: process.env.NIBSS_ORG_CODE
   });
 
   const { status } = credentials;
@@ -50,8 +50,8 @@ const verifyBVN = async (data) => {
     ivkey,
     password,
     aes_key: aesKey,
-    sandbox_key: process.env.SANDBOXKEY,
-    organisation_code: process.env.NIBSSOrganisationCode
+    sandbox_key: process.env.SANDBOX_KEY,
+    organisation_code: process.env.NIBSS_ORG_CODE
   });
   return verification;
 };
@@ -79,6 +79,7 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
 const registerEndpoint = async (req, res) => {
   const { bvn, pswd, email } = req.body;
 
+  // TODO prevent duplication registration
   try {
     const { ivkey, aes_key: aesKey, password } = await getNIBSSCredentials();
     const { data: verification } = await verifyBVN({
@@ -90,7 +91,7 @@ const registerEndpoint = async (req, res) => {
     const hashedPswd = await hashPswd(pswd);
     const accountId = await createUserAccount(verification, email, hashedPswd);
 
-    res.json({
+    res.status(201).json({
       accountId,
       message: 'Registration successfull!'
     });

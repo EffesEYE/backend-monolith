@@ -9,10 +9,10 @@ import endpoints from './endpoints';
 
 // TODO add API versioning
 const app = express();
-const APIVersion = process.env.APIVERSION;
+const APIVersion = process.env.API_VERSION;
 
 const apiMonitor = moesif({
-  applicationId: process.env.MOESIFID
+  applicationId: process.env.MOESIF_ID
 });
 
 const apiSpec = path.join(__dirname, 'api-spec.yaml');
@@ -31,7 +31,6 @@ app.use(
 app.use(`/${APIVersion}`, endpoints.hello);
 app.use(`/${APIVersion}/ping`, endpoints.ping);
 app.use(`/${APIVersion}/register`, endpoints.register);
-
 
 app.use((err, req, res, next) => {
   // TODO log this to the API monitoring service
