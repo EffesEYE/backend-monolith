@@ -98,7 +98,7 @@ const registerEndpoint = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: 'Unable to handle your request. Pls try again or contact support'
+      message: 'Unable to handle your registration request. Pls try again or contact support'
     });
   }
 };
