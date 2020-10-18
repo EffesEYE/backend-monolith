@@ -30,10 +30,14 @@ app.use(
 
 app.use(`/${APIVersion}`, endpoints.hello);
 app.use(`/${APIVersion}/ping`, endpoints.ping);
+
 app.use(`/${APIVersion}/register`, endpoints.register);
+app.use(`/${APIVersion}/auth/user-login`, endpoints.login.user);
+app.use(`/${APIVersion}/auth/admin-login`, endpoints.login.admin);
 
 app.use((err, req, res, next) => {
   // TODO log this to the API monitoring service
+  console.log('Err Path: ', req.path);
   res.status(err.status || 500).json({
     message: err.message
   });

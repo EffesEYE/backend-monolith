@@ -1,0 +1,2 @@
+GET http://localhost:8181/2020-10/ping
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidm4iOiIxMjM0NTY3ODkwMSIsImZpcnN0bmFtZSI6IlVjaGVubmEiLCJlbWFpbCI6ImNoYWx1d2FAZ21haWwuY29tIiwicGhvbmUiOiIwNzAzMzMzMzMzMyIsImlhdCI6MTYwMzAzMjM2Nn0.d-JrtI2nzQ3j1JUNBaPq31RB4PqHRuB4clN0nLT-daw
