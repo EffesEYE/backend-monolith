@@ -7,7 +7,6 @@ import * as APIValidator from 'express-openapi-validator';
 
 import endpoints from './endpoints';
 
-// TODO add API versioning
 const app = express();
 const APIVersion = process.env.API_VERSION;
 
@@ -15,12 +14,21 @@ const apiMonitor = moesif({
   applicationId: process.env.MOESIF_ID
 });
 
+// Monitor API usage
+app.use(apiMonitor);
+
+// Serve basic static assets
+// In this case, just the standard icon and the API spec
 const apiSpec = path.join(__dirname, 'api-spec.yaml');
 app.use(`/${APIVersion}/spec`, express.static(apiSpec));
+
+const ico = path.join(__dirname, 'logo-dark.ico');
+app.use('/favicon.ico', express.static(ico));
+
+// Add other critical middleware
 app.use(cors());
-app.use(apiMonitor);
 app.use(express.json());
-// app.use(pino({ useLevel: 'info' }));
+app.use(pino({ useLevel: 'info' }));
 app.use(
   APIValidator.middleware({
     apiSpec,
@@ -28,13 +36,17 @@ app.use(
   })
 );
 
+// Some novelty endpoints
+app.use('/', endpoints.hello);
 app.use(`/${APIVersion}`, endpoints.hello);
 app.use(`/${APIVersion}/ping`, endpoints.ping);
 
+// Route to the business of this platform!
 app.use(`/${APIVersion}/register`, endpoints.register);
 app.use(`/${APIVersion}/auth/user-login`, endpoints.login.user);
 app.use(`/${APIVersion}/auth/admin-login`, endpoints.login.admin);
 
+// Catch-all error handler
 app.use((err, req, res, next) => {
   // TODO log this to the API monitoring service
   console.log('Err Path: ', req.path);
