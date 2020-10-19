@@ -57,6 +57,11 @@ const verifyBVN = async (data) => {
   return verification;
 };
 
+const isDuplicateRegistrationAttempt = async (email) => {
+  const user = await DB.User.findOne({ where: { email } });
+  return !(user === null);
+};
+
 const createUserAccount = async (bvnVerification, email, pswd) => {
   const {
     BVN, FirstName, MiddleName, LastName, PhoneNumber
@@ -80,8 +85,12 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
 const registerEndpoint = async (req, res) => {
   const { bvn, pswd, email } = req.body;
 
-  // TODO prevent duplication registration
   try {
+    const isDuplicateReg = await isDuplicateRegistrationAttempt(email);
+    if (isDuplicateReg) {
+      return res.status(401).json({ message: 'Unauthorized. User already exists!' });
+    }
+
     const { ivkey, aes_key: aesKey, password } = await getNIBSSCredentials();
     const { data: verification } = await verifyBVN({
       ivkey,
