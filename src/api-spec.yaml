@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: EffesEYE API
+  title: EffesEYE Platform API
   version: 2020-10
   contact:
     email: chaluwa@gmail.com
@@ -9,14 +9,14 @@ info:
   license:
     name: MIT
   description: The EffesEYE MVP API
-  termsOfService: effeseye.xyz/tc
+  termsOfService: 'https://effeseye.herokuapp.com/tc'
 servers:
   - url: 'https://effeseye.herokuapp.com'
     description: Prod
 paths:
   '/{version}/airtime/recharge':
     post:
-      summary: Buy airtime
+      summary: Airtime recharge endpoint
       tags:
         - airtime
       responses:
@@ -45,15 +45,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/AirtimeRechargeError'
       operationId: post-airtime-recharge
-      description: buy airtime credit
+      description: Buy airtime credit
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AirtimeRechargeRequest'
             examples: {}
-      security:
-        - API-KEY: []
+        description: HTTP request payload of data for airtime recharge
+      security: []
       parameters: []
     parameters:
       - schema:
@@ -85,7 +85,7 @@ paths:
         required: true
         description: The API version
     get:
-      summary: get-airtime-recharge-status
+      summary: Airtime recharge status endpoint
       tags:
         - airtime
       responses:
@@ -103,44 +103,61 @@ paths:
                 $ref: '#/components/schemas/AirtimeRechargeError'
       operationId: get-airtime-recharge-requestId
       description: Query the status of an airtime recharge request using its request id
-      security:
-        - API-KEY: []
+      security: []
   '/{version}/register':
     post:
-      summary: register-app-user
+      summary: The user registration and account creation endpoint
       tags:
         - BVN
         - email
         - phone number
         - registration
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountRegistrationResponse'
-              examples: {}
+              examples:
+                example:
+                  value:
+                    message: Account created
+                    accountId: 5645f-5dw4358-hgf-34545345345
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountRegistrationResponse'
+              examples:
+                example:
+                  value:
+                    message: Account already exists!
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountRegistrationResponse'
+              examples:
+                example:
+                  value:
+                    message: Error handling your request. Pls contact support
       operationId: post-register
-      description: Create a new user account on the EffesEYE platform
+      description: Creates a new user account on the EffesEYE platform
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AccountRegistrationRequest'
-        description: The HTTP request payload containing the data needed to create the new account
+            examples:
+              example:
+                value:
+                  bvn: '12345678901'
+                  pswd: pa$$word
+                  email: user@example.com
+        description: The HTTP request payload of data needed to create the new account
     parameters:
       - schema:
           type: string
@@ -154,7 +171,7 @@ paths:
         description: The API version
   '/{version}/ping':
     get:
-      summary: Get the server's pulse
+      summary: A meta endpoint for retrieving the server's pulse
       tags:
         - ping
       responses:
@@ -164,8 +181,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PulseResponse'
+              examples:
+                example:
+                  value:
+                    message: 'EffesEYE API, Tuesday 4th October 2025'
       operationId: get-ping
-      description: Get a pulse of the server
+      description: Get a pulse of the API service
     post:
       summary: Get the server's pulse
       tags:
@@ -192,7 +213,7 @@ paths:
         description: The API version
   '/{version}':
     get:
-      summary: A catch all / fall-back endpoint
+      summary: The catch all / fall-back API endpoint
       tags:
         - ping
       responses:
@@ -203,7 +224,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PulseResponse'
       operationId: get
-      description: A catch all / fall-back endpoint
+      description: A catch-all / fall-back endpoint for the API
     post:
       summary: A catch all / fall-back endpoint
       tags:
@@ -230,7 +251,7 @@ paths:
         required: true
   '/{version}/auth/user-login':
     post:
-      summary: User authentication
+      summary: PWA client user authentication
       tags:
         - auth
         - login
@@ -247,7 +268,6 @@ paths:
                   value:
                     message: login successful
                     authToken: '567459867405764509769457694'
-                    refreshToken: '567459764957694567495674964'
         '403':
           description: Forbidden
           content:
@@ -270,7 +290,7 @@ paths:
                 value:
                   pswd: pa55W0rd
                   email: user@example.com
-        description: The HTTP request payload
+        description: The HTTP request payload of data for user authentication
     parameters:
       - schema:
           type: string
@@ -284,7 +304,7 @@ paths:
         description: The API version
   '/{version}/auth/admin-login':
     post:
-      summary: Admin authentication
+      summary: Admin user authentication
       tags:
         - auth
         - login
@@ -323,7 +343,7 @@ paths:
                 value:
                   pswd: pa55W0rd
                   email: user@example.com
-        description: The HTTP request payload
+        description: The HTTP request payload of data for admin authentication
     parameters:
       - schema:
           type: string
@@ -574,11 +594,7 @@ components:
           description: An authorization token provided on successful login. Automatically expires after 15 minutes
       required:
         - message
-  securitySchemes:
-    API-KEY:
-      name: EFFESEYE-API-KEY
-      type: apiKey
-      in: header
+  securitySchemes: {}
 tags:
   - name: airtime
   - name: BVN
