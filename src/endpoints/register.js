@@ -6,6 +6,7 @@ import DB from '../data/db/models';
 import redis from '../data/redis-store';
 import errors from '../commons/errors';
 import { hashPswd } from '../commons/auth';
+import { sendWelcomeEmail } from '../commons/email';
 
 const router = Router();
 const { NIBSSError } = errors;
@@ -73,7 +74,7 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
     firstname: FirstName,
     middlename: MiddleName
   });
-  return accountId;
+  return { accountId, firstname: FirstName };
 };
 
 const registerEndpoint = async (req, res) => {
@@ -89,8 +90,9 @@ const registerEndpoint = async (req, res) => {
       bvn
     });
     const hashedPswd = await hashPswd(pswd);
-    const accountId = await createUserAccount(verification, email, hashedPswd);
+    const { accountId, firstname } = await createUserAccount(verification, email, hashedPswd);
 
+    sendWelcomeEmail({ to: email, firstname });
     res.status(201).json({
       accountId,
       message: 'Registration successfull!'
