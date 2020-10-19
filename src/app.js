@@ -28,7 +28,7 @@ app.use('/favicon.ico', express.static(ico));
 // Add other critical middleware
 app.use(cors());
 app.use(express.json());
-app.use(pino({ useLevel: 'info' }));
+// app.use(pino({ useLevel: 'info' }));
 app.use(
   APIValidator.middleware({
     apiSpec,

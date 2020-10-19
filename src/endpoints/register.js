@@ -6,6 +6,7 @@ import DB from '../data/db/models';
 import redis from '../data/redis-store';
 import errors from '../commons/errors';
 import { hashPswd } from '../commons/auth';
+import { sendWelcomeEmail } from '../commons/email';
 
 const router = Router();
 const { NIBSSError } = errors;
@@ -56,6 +57,11 @@ const verifyBVN = async (data) => {
   return verification;
 };
 
+const isDuplicateRegistrationAttempt = async (email) => {
+  const user = await DB.User.findOne({ where: { email } });
+  return !(user === null);
+};
+
 const createUserAccount = async (bvnVerification, email, pswd) => {
   const {
     BVN, FirstName, MiddleName, LastName, PhoneNumber
@@ -73,14 +79,18 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
     firstname: FirstName,
     middlename: MiddleName
   });
-  return accountId;
+  return { accountId, firstname: FirstName };
 };
 
 const registerEndpoint = async (req, res) => {
   const { bvn, pswd, email } = req.body;
 
-  // TODO prevent duplication registration
   try {
+    const isDuplicateReg = await isDuplicateRegistrationAttempt(email);
+    if (isDuplicateReg) {
+      return res.status(401).json({ message: 'Unauthorized. User already exists!' });
+    }
+
     const { ivkey, aes_key: aesKey, password } = await getNIBSSCredentials();
     const { data: verification } = await verifyBVN({
       ivkey,
@@ -89,8 +99,9 @@ const registerEndpoint = async (req, res) => {
       bvn
     });
     const hashedPswd = await hashPswd(pswd);
-    const accountId = await createUserAccount(verification, email, hashedPswd);
+    const { accountId, firstname } = await createUserAccount(verification, email, hashedPswd);
 
+    sendWelcomeEmail({ to: email, firstname });
     res.status(201).json({
       accountId,
       message: 'Registration successfull!'
