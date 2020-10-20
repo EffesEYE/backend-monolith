@@ -3,6 +3,7 @@ import { Router } from 'express';
 import register from './register';
 import userLogin from './user-login';
 import adminLogin from './admin-login';
+import verifyToken from './verify-token';
 
 const ping = Router();
 const hello = Router();
@@ -18,7 +19,8 @@ export default {
   hello,
   login: {
     user: userLogin,
-    admin: adminLogin
+    admin: adminLogin,
+    verify: verifyToken
   },
   register
 };

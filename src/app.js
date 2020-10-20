@@ -28,7 +28,7 @@ app.use('/favicon.ico', express.static(ico));
 // Add other critical middleware
 app.use(cors());
 app.use(express.json());
-// app.use(pino({ useLevel: 'info' }));
+app.use(pino({ useLevel: 'info' }));
 app.use(
   APIValidator.middleware({
     apiSpec,
@@ -36,7 +36,7 @@ app.use(
   })
 );
 
-// Some novelty endpoints
+// Meta endpoints
 app.use('/', endpoints.hello);
 app.use(`/${APIVersion}`, endpoints.hello);
 app.use(`/${APIVersion}/ping`, endpoints.ping);
@@ -45,6 +45,7 @@ app.use(`/${APIVersion}/ping`, endpoints.ping);
 app.use(`/${APIVersion}/register`, endpoints.register);
 app.use(`/${APIVersion}/auth/user-login`, endpoints.login.user);
 app.use(`/${APIVersion}/auth/admin-login`, endpoints.login.admin);
+app.use(`/${APIVersion}/auth/verify-token`, endpoints.login.verify);
 
 // Catch-all error handler
 app.use((err, req, res, next) => {

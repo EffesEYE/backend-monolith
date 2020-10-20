@@ -355,7 +355,7 @@ paths:
         in: path
         required: true
         description: The API version
-  '/spec/{version}':
+  '/{version}/spec':
     get:
       summary: Get the API specification
       tags:
@@ -380,6 +380,51 @@ paths:
         name: version
         in: path
         required: true
+  '/{version}/auth/verify-token':
+    parameters:
+      - schema:
+          type: string
+        name: version
+        in: path
+        required: true
+    post:
+      summary: Verify a given authentication token
+      tags:
+        - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  verified:
+                    type: boolean
+                    description: Indicates the validity of the token in question
+                required:
+                  - verified
+              examples:
+                example:
+                  value:
+                    verified: true
+      operationId: post-version-auth-verify-token
+      description: 'Checks the validity and expiry of a token, and only returns true for tokens that have a valid cryptographic signature and have not expired'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: The token to verify
+              required:
+                - token
+            examples:
+              example:
+                value:
+                  token: 67760385-30483gdlfkglkdfgtu9564967540764674hgdflhglkfhl2309-5403485
 components:
   schemas:
     AirtimeRechargeResponse:

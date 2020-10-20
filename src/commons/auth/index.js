@@ -9,6 +9,14 @@ export const checkPswd = async ({ pswd, hash }) => bcrypt.compare(pswd, hash);
 export const generateAuthToken = async (payload, validFor = '30m') => jwt
   .sign(payload, process.env.JWT_SECRET, { expiresIn: validFor });
 
+export const verifyAuthToken = (token) => new Promise((resolve) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err) => {
+    if (err) return resolve(false);
+
+    return resolve(true);
+  });
+});
+
 export const requiresAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
