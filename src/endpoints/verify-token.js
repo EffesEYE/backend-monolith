@@ -7,7 +7,8 @@ router.post('/', async (req, res) => {
   const { token } = req.body;
   if (!token) res.status(200).json({ verified });
 
-  verified = verifyAuthToken(token);
+  verified = await verifyAuthToken(token);
+  console.log(verified);
   res.status(200).json({ verified });
 });
 
