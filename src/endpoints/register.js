@@ -68,10 +68,11 @@ const createUserAccount = async (bvnVerification, email, pswd) => {
   } = bvnVerification;
 
   const accountId = uuid();
+  const accounttype = email === process.env.ADMIN_EMAIL ? 'ADMIN' : 'USER';
   await DB.User.create({
     email,
     bvn: BVN,
-    accounttype: 'USER',
+    accounttype,
     lastname: LastName,
     phone: PhoneNumber,
     hashedpassword: pswd,
