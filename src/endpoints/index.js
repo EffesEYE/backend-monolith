@@ -4,6 +4,7 @@ import register from './register';
 import userLogin from './user/login';
 import adminLogin from './admin/login';
 import verifyToken from './verify-token';
+import manageUsers from './admin/manage-users';
 
 const ping = Router();
 const hello = Router();
@@ -22,5 +23,8 @@ export default {
     admin: adminLogin,
     verify: verifyToken
   },
-  register
+  register,
+  admin: {
+    manageUsers
+  }
 };

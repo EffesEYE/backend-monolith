@@ -8,10 +8,10 @@ info:
     url: charlesodili.rocks
   license:
     name: MIT
-  description: The EffesEYE MVP API
+  description: The EffesEYE API
   termsOfService: 'https://effeseye.herokuapp.com/tc'
 servers:
-  - url: 'https://effeseye.herokuapp.com'
+  - url: 'https://effeseye-api.herokuapp.com'
     description: Prod
 paths:
   '/{version}/airtime/recharge':
@@ -380,13 +380,19 @@ paths:
         name: version
         in: path
         required: true
+        description: The API version
   '/{version}/auth/verify-token':
     parameters:
       - schema:
           type: string
+          example: 2020-10
+          pattern: '^\d{4}-\d{2}$'
+          minLength: 7
+          maxLength: 7
         name: version
         in: path
         required: true
+        description: The API version
     post:
       summary: Verify a given authentication token
       tags:
@@ -425,78 +431,125 @@ paths:
               example:
                 value:
                   token: 67760385-30483gdlfkglkdfgtu9564967540764674hgdflhglkfhl2309-5403485
+  '/{version}/bo/users':
+    parameters:
+      - schema:
+          type: string
+          example: 2020-10
+          pattern: '^\d{4}-\d{2}$'
+          minLength: 7
+          maxLength: 7
+        name: version
+        in: path
+        required: true
+        description: The API version
+    get:
+      summary: Fetch user account data
+      tags:
+        - admin
+        - user-data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListingResponse'
+              examples:
+                example:
+                  value:
+                    message: success
+                    data:
+                      - accountid: 45930953573nvvgjout4309u045043
+                        firstname: Charles
+                        lastname: Odili
+                        email: chalu@example.com
+                        lastseen: 1603383571010
+                        membersince: 1602111600000
+      operationId: get-version-bo-users
+      description: Fetch a collection of registered users (accounts) on the platform
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: The header containing a valid access token
+          required: true
+  '/{version}/bo/payments':
+    parameters:
+      - schema:
+          type: string
+          example: 2020-10
+          pattern: '^\d{4}-\d{2}$'
+          minLength: 7
+          maxLength: 7
+        name: version
+        in: path
+        required: true
+        description: The API version
+    get:
+      summary: Fetch payments collection
+      tags:
+        - admin
+        - payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentsListingResponse'
+              examples:
+                example:
+                  value:
+                    message: payment successful
+                    data:
+                      - id: rgkdlkfj5695476947694
+                        amount: 1000
+                        currency: NGN
+                        type: AIRTIME
+                        status: SUCCEEDED
+                        when: 1603389358987
+                        details:
+                          network: Airtel
+      operationId: get-version-bo-payments
+      description: Fetch a collection of payments done on the patform
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: The header containing a valid access token
+          required: true
 components:
   schemas:
     AirtimeRechargeResponse:
-      title: AirtimeRechargeResponse
+      title: PaymentResponse
       type: object
-      description: 'HTTP response payload from an airtime recharge request. The `amount`, `currency`, `network`, `sendTo`, and `requestedBy` fields are only present when responding to a `GET` request since `POST` requests will already have such data.'
+      description: 'HTTP response payload for a bills payment request. '
       x-tags:
         - airtime
-      x-examples:
-        successful-recharge:
-          message: recharge successful
-          requestId: dfd-453533-5gfds-453453453
-          recharged: true
-          requestStatus: DONE
-        failed-recharge:
-          message: recharge failed
-          requestId: dfsd-4534534535-gfd5-5435345353
-          recharged: false
-          requestStatus: DONE
-        pending-recharge:
-          message: pending recharge
-          requestId: 543-fgdt45-534534535-534535
-          recharged: false
-          requestStatus: IN-PROGRESS
+      x-examples: {}
       properties:
         message:
           type: string
-          description: a message describing the status or progress of the airtime recharge request
+          description: a message describing the status or progress of the payment request
         requestId:
           type: string
           description: 'The id of the request. Can be handy when the request needs to be querried in the future e.g to see if the status has changed, or to build a transaction history.'
-        recharged:
-          type: boolean
-          description: Indicates if the recharge was successful (true) or not (false)
-        requestStatus:
+        status:
           type: string
-          enum:
-            - DONE
-            - IN-PROGRESS
           description: The status for the airtime recharge request. Can either be DONE or IN-PROGRESS
-        amount:
-          type: integer
-          description: 'The airtime recharge amount, between 100 and 10,000 in specified currency'
-          minimum: 100
-          maximum: 10000
-        currency:
-          type: string
           enum:
-            - NGN
-          description: 'The ISO-xx formatted currency of `amount` for the airtime purchase '
-        network:
-          type: string
-          enum:
-            - MTN
-            - Airtel
-            - Glo
-            - 9Mobile
-          description: The network provider whose airtime is being purchased
-        sendTo:
-          type: string
-          description: The phone number to credit the aritime to
-        requestedBy:
-          type: string
-          description: The phone number requesting the airtime recharge
-        accountToDebit:
-          type: string
-          description: Verified bank account to debit
+            - PENDING
+            - FAILED
+            - SUCCEEDED
+        details:
+          type: object
+          description: An object containing additional information partaining to the particular type of payment attempted
       required:
         - message
         - requestId
-        - recharged
-        - requestStatus
     AirtimeRechargeRequest:
       title: AirtimeRechargeRequest
       type: object
@@ -639,6 +692,116 @@ components:
           description: An authorization token provided on successful login. Automatically expires after 15 minutes
       required:
         - message
+    UsersListingResponse:
+      title: UsersListingResponse
+      type: object
+      description: HTTP response payload for fetching a list of user (account) data
+      x-tags:
+        - admin
+        - user-data
+      properties:
+        message:
+          type: string
+          description: A message describing the handling of the request. Will be helful if there was an error
+        data:
+          type: array
+          description: An array of user account data objects
+          items:
+            $ref: '#/components/schemas/UserData'
+      required:
+        - message
+    UserData:
+      title: UserData
+      type: object
+      description: Data represneting a user in the platform
+      x-tags:
+        - admin
+        - user-data
+      properties:
+        accountid:
+          type: string
+          description: The account-id of the user
+        firstname:
+          type: string
+          description: The user's firstname
+        lastname:
+          type: string
+          description: The user's lastname
+        email:
+          type: string
+          description: The user's email address
+        lastseen:
+          description: The timestamp of when the user last logged into the platform
+          type: string
+        membersince:
+          description: The timestamp of when the account was created
+          type: string
+      required:
+        - accountid
+        - firstname
+        - lastname
+        - email
+        - lastseen
+        - membersince
+    PaymentsListingResponse:
+      title: PaymentsListingResponse
+      type: object
+      description: HTTP response payload for fetching payments data
+      properties:
+        message:
+          type: string
+          description: The request status description
+        data:
+          type: array
+          description: An array of payment data objects
+          items:
+            $ref: '#/components/schemas/PaymentData'
+      required:
+        - message
+    PaymentData:
+      title: PaymentData
+      type: object
+      description: Data representing a payment on the platform
+      properties:
+        id:
+          type: string
+          description: The payment record ID
+        amount:
+          type: number
+          description: The payment transaction amount
+        currency:
+          type: string
+          enum:
+            - NGN
+            - USD
+          description: The payment transaction currency
+        type:
+          type: string
+          enum:
+            - AIRTIME
+            - ELECTRICITY
+            - PAYTV
+          description: 'What was paid for. Either `Airtime`, `Electricity`, or `PayTV`'
+        status:
+          type: string
+          enum:
+            - PENDING
+            - FAILED
+            - SUCCEEDED
+          description: 'The status of the payment, which will either be `Failed`, `Pending`, or `Succeeded`'
+        when:
+          description: A timestamp of when the payment occured
+          type: string
+        details:
+          type: object
+          description: Extra details and metadate about the payment. Specific to the type of payment
+      required:
+        - id
+        - amount
+        - currency
+        - type
+        - status
+        - when
   securitySchemes: {}
 tags:
   - name: airtime
@@ -650,3 +813,6 @@ tags:
   - name: auth
   - name: login
   - name: spec
+  - name: admin
+  - name: user-data
+  - name: payments

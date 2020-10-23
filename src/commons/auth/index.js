@@ -24,11 +24,15 @@ export const requiresAuth = (req, res, next) => {
   // enforce presence of the header, but safer to double check
   if (!authHeader) return res.status(401).json({ message: 'Unauthorized. Invalid Authorization header' });
 
-  const token = authHeader.split(' ')[1];
+  const headerValues = authHeader.split(' ');
+  const authType = headerValues[0];
+  const token = headerValues[1];
+
+  if (!authType || authType.toLowerCase() !== 'bearer') return res.status(401).json({ message: 'Unauthorized. Invalid header' });
   if (!token) return res.status(401).json({ message: 'Unauthorized. Invalid token' });
 
   return jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(401).json({ message: 'Unauthorized. Invalid token' });
+    if (err) return res.status(401).json({ message: 'Unauthorized. Cannot verify token' });
 
     req.user = user;
     return next();
