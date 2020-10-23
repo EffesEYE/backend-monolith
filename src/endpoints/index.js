@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
 import register from './register';
-import userLogin from './user-login';
-import adminLogin from './admin-login';
+import userLogin from './user/login';
+import adminLogin from './admin/login';
 import verifyToken from './verify-token';
 
 const ping = Router();
