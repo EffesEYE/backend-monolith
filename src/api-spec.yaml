@@ -736,6 +736,12 @@ components:
         membersince:
           description: The timestamp of when the account was created
           type: string
+        accounttype:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+          description: The user account type
       required:
         - accountid
         - firstname
@@ -743,6 +749,7 @@ components:
         - email
         - lastseen
         - membersince
+        - accounttype
     PaymentsListingResponse:
       title: PaymentsListingResponse
       type: object

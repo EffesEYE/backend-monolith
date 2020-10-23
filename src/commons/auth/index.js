@@ -55,7 +55,14 @@ export const login = async (req, res, userType = 'USER') => {
     const pswdMatched = await checkPswd({ pswd, hash: hashedpassword });
     if (!pswdMatched) return res.status(403).json({ message: INVALID_LOGIN_MSG });
 
+    // Update the DB that we just
+    // saw this user. Treat as a synchronouse
+    // operation by not waiting for it;
+    user.lastseen = new Date();
+    user.save();
+
     const authToken = await generateAuthToken(profile);
+
     return res.status(200).json({
       authToken,
       message: 'Successful login'
