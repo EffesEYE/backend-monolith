@@ -43,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
       phone: {
         type: DataTypes.STRING(14),
         allowNull: false
+      },
+      lastseen: {
+        allowNull: true,
+        type: DataTypes.DATE
       }
     },
     {

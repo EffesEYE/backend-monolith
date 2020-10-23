@@ -38,6 +38,10 @@ module.exports = {
         type: Sequelize.STRING(14),
         allowNull: false
       },
+      lastseen: {
+        allowNull: true,
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

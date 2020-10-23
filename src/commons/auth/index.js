@@ -6,7 +6,7 @@ export const hashPswd = async (pswd) => bcrypt.hash(pswd, 10);
 
 export const checkPswd = async ({ pswd, hash }) => bcrypt.compare(pswd, hash);
 
-export const generateAuthToken = async (payload, validFor = '30m') => jwt
+export const generateAuthToken = async (payload, validFor = '5m') => jwt
   .sign(payload, process.env.JWT_SECRET, { expiresIn: validFor });
 
 export const verifyAuthToken = (token) => new Promise((resolve) => {
@@ -28,7 +28,7 @@ export const requiresAuth = (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Unauthorized. Invalid token' });
 
   return jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: 'Unauthorized. Invalid token' });
+    if (err) return res.status(401).json({ message: 'Unauthorized. Invalid token' });
 
     req.user = user;
     return next();

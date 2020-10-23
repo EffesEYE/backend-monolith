@@ -1,1 +1,17 @@
-GET http://localhost:8181/2020-10/ping
+POST http://localhost:8181/2020-10/auth/verify-token
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdG5hbWUiOiJVY2hlbm5hIiwicGhvbmUiOiIwNzAzMzMzMzMzMyIsImhhc2hlZHBhc3N3b3JkIjoiJDJiJDEwJC8xVDRmWnBLMms0NEtOS0lnNFduSC50RDJ6LzhENWxXMU8zdXpaay8yMlh6a3NQU1NoSjZxIiwiaWF0IjoxNjAzMjQ0MjczLCJleHAiOjE2MDMyNDYwNzN9.JOS2muLjlII1QySmieAeVSA-MjYFWiNWktLQ2QVmSb4"
+}
+
+###
+
+POST http://localhost:8181/2020-10/register
+Content-Type: application/json
+
+{
+    "bvn": "12345678901",
+    "pswd": "pa55W0rd",
+    "email": "chaluwa@gmail.com"
+}
