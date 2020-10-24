@@ -24,6 +24,15 @@ module.exports = {
         allowNull: false
       },
       tnxdetails: Sequelize.TEXT,
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          key: 'id',
+          as: 'userId',
+          model: 'Users'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

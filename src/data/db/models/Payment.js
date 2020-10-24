@@ -8,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Payment.belongsTo(models.User);
+      Payment.belongsTo(models.User, {
+        foreignKey: 'userId'
+      });
     }
   }
   Payment.init(
@@ -37,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         set(value) {
           return this.setDataValue('tnxdetails', JSON.stringify(value));
         }
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
       }
     },
     {
