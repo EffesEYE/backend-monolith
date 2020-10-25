@@ -5,6 +5,7 @@ import userLogin from './user/login';
 import adminLogin from './admin/login';
 import verifyToken from './verify-token';
 import manageUsers from './admin/manage-users';
+import addBankAccount from './user/add-bank-account';
 
 const ping = Router();
 const hello = Router();
@@ -26,5 +27,8 @@ export default {
   register,
   admin: {
     manageUsers
+  },
+  user: {
+    addBankAccount
   }
 };

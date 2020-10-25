@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
       validate: {
-        is: /^[0-9]{11}$/i
+        is: /^[0-9]{10}$/i
       }
     },
     bank: {
