@@ -14,46 +14,77 @@ servers:
   - url: 'https://effeseye-api.herokuapp.com'
     description: Prod
 paths:
-  '/{version}/airtime/recharge':
+  '/{version}/pay/{service}':
     post:
-      summary: Airtime recharge endpoint
+      summary: Payment service endpoint
       tags:
         - airtime
+        - electricity
+        - paytv
+        - payments
       responses:
         '200':
-          description: OK
+          description: OK. Raised when the request completed but the payment is still in progress
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirtimeRechargeResponse'
+                $ref: '#/components/schemas/PaymentResponse'
+              examples:
+                example:
+                  value:
+                    message: request handled
+                    paymentId: 4932-458405843-53-45
+                    status: PENDING
         '201':
-          description: Created
+          description: Created. Raised when the payment completed successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirtimeRechargeResponse'
+                $ref: '#/components/schemas/PaymentResponse'
         '401':
-          description: Unauthorized
+          description: Unauthorized. Usually raised due to supplying an invalid access token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirtimeRechargeError'
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirtimeRechargeError'
+                $ref: '#/components/schemas/ErrorResponse'
       operationId: post-airtime-recharge
-      description: Buy airtime credit
+      description: 'Buy airtime credit, pay for electricity or TV subscription with this endpoint'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AirtimeRechargeRequest'
-            examples: {}
-        description: HTTP request payload of data for airtime recharge
-      security: []
+              $ref: '#/components/schemas/PaymentRequest'
+            examples:
+              airtime-example:
+                value:
+                  amount: 1000
+                  currency: NGN
+                  provider: Airtel
+                  sendTo: '+2348138145472'
+                  accountToDebit: '0037514056'
+              electricity-example:
+                value:
+                  amount: 8500
+                  currency: NGN
+                  provider: EKDC
+                  sendTo: 56834930-5-4564-8-gbfg
+                  accountToDebit: '0037514056'
+              tv-example:
+                value:
+                  amount: 12000
+                  currency: NGN
+                  provider: DSTV
+                  sendTo: 45783-08-fjsd0948503
+                  accountToDebit: '0037514056'
+        description: HTTP request payload for the payment service
+      security:
+        - Authorization: []
       parameters: []
     parameters:
       - schema:
@@ -66,11 +97,23 @@ paths:
         in: path
         required: true
         description: The API version
-  '/{version}/airtime/recharge/{requestId}':
+      - schema:
+          type: string
+          enum:
+            - airtime
+            - electricity
+            - tv
+          minLength: 2
+          maxLength: 11
+        name: service
+        in: path
+        required: true
+        description: The service you want to pay for
+  '/{version}/pay/{service}/{paymentId}':
     parameters:
       - schema:
           type: string
-        name: requestId
+        name: paymentId
         in: path
         required: true
         description: The request id of a previous airtime recharge request
@@ -84,26 +127,55 @@ paths:
         in: path
         required: true
         description: The API version
+      - schema:
+          type: string
+          enum:
+            - airtime
+            - electricity
+            - tv
+          minLength: 2
+          maxLength: 11
+        name: service
+        in: path
+        required: true
+        description: The service the payment was for
     get:
-      summary: Airtime recharge status endpoint
+      summary: Payment enquiry / status endpoint
       tags:
         - airtime
+        - electricity
+        - paytv
+        - payments
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirtimeRechargeResponse'
+                $ref: '#/components/schemas/PaymentResponse'
+              examples:
+                example:
+                  value:
+                    message: payment status
+                    paymentId: 45934508043-583
+                    status: SUCCEEDED
         '401':
-          description: Unauthorized
+          description: Unauthorized. Usually raised due to supplying an invalid access token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirtimeRechargeError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       operationId: get-airtime-recharge-requestId
-      description: Query the status of an airtime recharge request using its request id
-      security: []
+      description: Query the status of a payment transaction
+      security:
+        - Authorization: []
+      parameters: []
   '/{version}/register':
     post:
       summary: The user registration and account creation endpoint
@@ -463,18 +535,27 @@ paths:
                       - accountid: 45930953573nvvgjout4309u045043
                         firstname: Charles
                         lastname: Odili
+                        accounttype: ADMIN
                         email: chalu@example.com
-                        lastseen: 1603383571010
-                        membersince: 1602111600000
+                        lastseen: '2020-10-24T15:38:12.580Z'
+                        membersince: '2020-10-24T15:38:12.580Z'
+        '401':
+          description: Unauthorized. Usually raised due to supplying an invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       operationId: get-version-bo-users
       description: Fetch a collection of registered users (accounts) on the platform
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: The header containing a valid access token
-          required: true
+      parameters: []
+      security:
+        - Authorization: []
   '/{version}/bo/payments':
     parameters:
       - schema:
@@ -509,105 +590,143 @@ paths:
                         currency: NGN
                         type: AIRTIME
                         status: SUCCEEDED
-                        when: 1603389358987
+                        when: '2020-10-24T15:35:41.000Z'
                         details:
                           network: Airtel
+        '401':
+          description: Unauthorized. Usually raised due to supplying an invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       operationId: get-version-bo-payments
       description: Fetch a collection of payments done on the patform
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: The header containing a valid access token
-          required: true
+      parameters: []
+      security:
+        - Authorization: []
+  /account/add-bank:
+    post:
+      summary: Verify and add a (NUBAN) bank account
+      tags:
+        - NUBAN
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddBankAccountResponse'
+        '401':
+          description: Unauthorized. Usually raised due to supplying an invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: post-account-add-bank
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddBankAccountRequest'
+            examples:
+              example:
+                value:
+                  nuban: '0037514056'
+        description: HTTP request payload to add a bank account
+      description: 'Verify and add a NUBAN (bank account) number to a user''s EffesEYE account, allowing them initiate payments from the bank accounts'
 components:
   schemas:
-    AirtimeRechargeResponse:
+    PaymentResponse:
       title: PaymentResponse
       type: object
-      description: 'HTTP response payload for a bills payment request. '
+      description: HTTP response payload for making a payment
       x-tags:
         - airtime
       x-examples: {}
       properties:
         message:
           type: string
-          description: a message describing the status or progress of the payment request
-        requestId:
+          description: a message describing the status or progress of the payment
+        paymentId:
           type: string
-          description: 'The id of the request. Can be handy when the request needs to be querried in the future e.g to see if the status has changed, or to build a transaction history.'
+          description: 'The id of the payment request. Very handy when the request needs to be querried in the future e.g to see if the status has changed (i.e from PENDING to SUCCEEDED), or to build a transaction history.'
         status:
           type: string
-          description: The status for the airtime recharge request. Can either be DONE or IN-PROGRESS
+          description: 'The status of the payment request. Can be FAILED, PENDING, or SUCCEEDED'
           enum:
             - PENDING
             - FAILED
             - SUCCEEDED
         details:
           type: object
-          description: An object containing additional information partaining to the particular type of payment attempted
+          description: An optional object containing additional information partaining to the payment attempted
       required:
         - message
-        - requestId
-    AirtimeRechargeRequest:
-      title: AirtimeRechargeRequest
+        - paymentId
+        - status
+    PaymentRequest:
+      title: PaymentRequest
       type: object
       x-tags:
         - airtime
-      description: 'The HTTP request payload for an airtime recharge request. If the optional `network` field is not specified, it is inferred from the `requestedBy` phone number'
+      description: The HTTP request payload for making a payment
       properties:
         amount:
           type: integer
-          description: 'The airtime recharge amount, between 100 and 10,000 in specified currency'
-          minimum: 100
-          maximum: 10000
+          description: The amount to pay for the service
         currency:
           type: string
           enum:
             - NGN
-          description: 'The ISO-xx formatted currency of `amount` for the airtime purchase '
-        network:
+            - USD
+          description: The ISO 4217 currency code the `amount` is expressed in
+          minLength: 3
+          maxLength: 3
+        provider:
           type: string
-          enum:
-            - MTN
-            - Airtel
-            - Glo
-            - 9Mobile
-          description: The network provider whose airtime is being purchased
+          description: |-
+            The provider whose service is being purchased:  > For airtime, this could be `Airtel`, `MTN`, `Glo`, `9Mobile` e.t.c.
+
+            > For PayTV, this could be `DSTV`, `Startimes`, `GoTV` e.t.c
+
+            > For electricity, this could be `EKDC`, `IKEDC`, `BEDC`, `IBEDC` e.t.c
         sendTo:
           type: string
-          description: The phone number to credit the aritime to
-        requestedBy:
-          type: string
-          description: The phone number requesting the airtime recharge
+          description: 'The corresponding phone number, meter number, or TV subscription Id to credit this recharge to'
         accountToDebit:
           type: string
-          description: Verified bank account to debit
+          description: The verified (NUBAN) bank account to debit for this payment
+          minLength: 10
+          maxLength: 10
       required:
         - amount
         - currency
+        - provider
         - sendTo
-        - requestedBy
-        - accountToDebit
-    AirtimeRechargeError:
-      title: AirtimeRechargeError
+    ErrorResponse:
+      title: ErrorResponse
       type: object
-      description: The HTTP response payload for filed airtime recharge requests
+      description: The HTTP response payload for requests that terminated with errors
       properties:
         message:
           type: string
-          description: description of error
-        requestId:
-          type: string
-          description: The ID of the airtime recharge request
-        statusCode:
-          type: string
-          description: 'The corresponsding HTTP status code. E.g `401` if the required secuirty headers are absent, or `500` for a server / service error'
+          description: A statement or description of the error
       required:
         - message
-        - requestId
-        - statusCode
     AccountRegistrationRequest:
       title: AccountRegistrationRequest
       type: object
@@ -809,7 +928,40 @@ components:
         - type
         - status
         - when
-  securitySchemes: {}
+    AddBankAccountRequest:
+      title: AddBankAccountRequest
+      type: object
+      description: HTTP request payload to add a bank account
+      properties:
+        nuban:
+          type: string
+          minLength: 10
+          maxLength: 10
+          description: The NUBAN account number
+      required:
+        - nuban
+    AddBankAccountResponse:
+      title: AddBankAccountResponse
+      type: object
+      description: HTTP response payload from attempting to verify and add a NUBAN account
+      properties:
+        message:
+          type: string
+          description: description of handling the request
+        status:
+          type: string
+          enum:
+            - FAILED
+            - SUCCEEDED
+          description: The status of the operation
+      required:
+        - message
+        - status
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      description: The HTTP Authorization header containing a valid access token designated as `Bearer`
 tags:
   - name: airtime
   - name: BVN
@@ -823,3 +975,6 @@ tags:
   - name: admin
   - name: user-data
   - name: payments
+  - name: electricity
+  - name: paytv
+  - name: NUBAN

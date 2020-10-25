@@ -60,6 +60,7 @@ export const login = async (req, res, userType = 'USER') => {
     // operation by not waiting for it;
     user.lastseen = new Date();
     user.save();
+    console.log(user);
 
     const authToken = await generateAuthToken(profile);
 
