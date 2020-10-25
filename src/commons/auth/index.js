@@ -47,8 +47,8 @@ export const login = async (req, res, userType = 'USER') => {
     const user = await DB.User.findOne({ where: { accounttype: `${userType}`, email } });
     if (!user) return res.status(403).json({ message: INVALID_LOGIN_MSG });
 
-    const { firstname, phone, hashedpassword } = user.dataValues;
-    const profile = { firstname, phone, hashedpassword };
+    const { firstname, hashedpassword } = user.dataValues;
+    const profile = { firstname, email, hashedpassword };
 
     if (userType === 'USER') profile.bvn = user.dataValues.bvn;
 
@@ -60,7 +60,6 @@ export const login = async (req, res, userType = 'USER') => {
     // operation by not waiting for it;
     user.lastseen = new Date();
     user.save();
-    console.log(user);
 
     const authToken = await generateAuthToken(profile);
 
