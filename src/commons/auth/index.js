@@ -47,8 +47,10 @@ export const login = async (req, res, userType = 'USER') => {
     const user = await DB.User.findOne({ where: { accounttype: `${userType}`, email } });
     if (!user) return res.status(403).json({ message: INVALID_LOGIN_MSG });
 
-    const { firstname, hashedpassword } = user.dataValues;
-    const profile = { firstname, email, hashedpassword };
+    const { firstname, phone, hashedpassword } = user.dataValues;
+    const profile = {
+      firstname, phone, email, hashedpassword
+    };
 
     if (userType === 'USER') profile.bvn = user.dataValues.bvn;
 
