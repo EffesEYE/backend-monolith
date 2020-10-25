@@ -5,14 +5,23 @@ info:
   contact:
     email: chaluwa@gmail.com
     name: Charles Odili
-    url: charlesodili.rocks
   license:
     name: MIT
-  description: The EffesEYE API
-  termsOfService: 'https://effeseye.herokuapp.com/tc'
+  description: |-
+    Charles Odili just joined a fintech startup, EffesEYE, and was asked to lead the development of an urgent project on the table, a simple billing application.
+
+    In order to have a view on the practicality of this new product, the Board asked that he develop and present an MVP of this product to them at the next Management meeting.
+
+    Odili was required to build an MVP on the [FSI Sandbox](https://sandbox.fsi.ng/), integrated into the APIs of the available Banks and services of the Sandbox. This application can buy telephone credit, pay electricity bills and Pay TV bills (DSTV, Startimes, etc).
+
+
+    Odili adopted an API-first approach, and this is the documentation convering the API that drives the services and features the EffesEYE billing (MVP) platform provides to customers.
+
+    The API is deployed at [https://effeseye-api.herokuapp.com](https://effeseye-api.herokuapp.com), is managed by a secure admin application at [https://effeseye-admin.netlify.app](https://effeseye-admin.netlify.app), and is available for customers via an installable Progressive Web App at [https://effeseye-admin.netlify.app](https://effeseye-admin.netlify.app) 
+  termsOfService: 'https://effeseye-api.herokuapp.com/tc'
 servers:
   - url: 'https://effeseye-api.herokuapp.com'
-    description: Prod
+    description: Production
 paths:
   '/{version}/pay/{service}':
     post:
@@ -610,14 +619,14 @@ paths:
       parameters: []
       security:
         - Authorization: []
-  /account/add-bank:
+  '/{version}/account/add-bank':
     post:
       summary: Verify and add a (NUBAN) bank account
       tags:
         - NUBAN
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -628,6 +637,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 'Forbidden. Raised if the NUBAN account number cannot be verifed, or the related EffesEYE account details are invalid'
         '500':
           description: Internal Server Error
           content:
@@ -646,8 +657,20 @@ paths:
               example:
                 value:
                   nuban: '0037514056'
+                  bankname: UBA
         description: HTTP request payload to add a bank account
       description: 'Verify and add a NUBAN (bank account) number to a user''s EffesEYE account, allowing them initiate payments from the bank accounts'
+    parameters:
+      - schema:
+          type: string
+          pattern: '^\d{4}-\d{2}$'
+          minLength: 7
+          maxLength: 7
+          example: 2020-10
+        name: version
+        in: path
+        required: true
+        description: The API version
 components:
   schemas:
     PaymentResponse:
@@ -699,7 +722,9 @@ components:
         provider:
           type: string
           description: |-
-            The provider whose service is being purchased:  > For airtime, this could be `Airtel`, `MTN`, `Glo`, `9Mobile` e.t.c.
+            The provider whose service is being purchased:  
+
+            > For airtime, this could be `Airtel`, `MTN`, `Glo`, `9Mobile` e.t.c.
 
             > For PayTV, this could be `DSTV`, `Startimes`, `GoTV` e.t.c
 
@@ -938,8 +963,13 @@ components:
           minLength: 10
           maxLength: 10
           description: The NUBAN account number
+        bankname:
+          type: string
+          minLength: 3
+          description: The name of the Bank
       required:
         - nuban
+        - bankname
     AddBankAccountResponse:
       title: AddBankAccountResponse
       type: object
