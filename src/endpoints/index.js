@@ -5,6 +5,7 @@ import userLogin from './user/login';
 import adminLogin from './admin/login';
 import verifyToken from './verify-token';
 import manageUsers from './admin/manage-users';
+import managePayments from './admin/manage-payments';
 import addBankAccount from './user/add-bank-account';
 
 const ping = Router();
@@ -26,7 +27,8 @@ export default {
   },
   register,
   admin: {
-    manageUsers
+    manageUsers,
+    managePayments
   },
   user: {
     addBankAccount

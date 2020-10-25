@@ -46,7 +46,9 @@ app.use(`/${APIVersion}/register`, endpoints.register);
 app.use(`/${APIVersion}/auth/user-login`, endpoints.login.user);
 app.use(`/${APIVersion}/auth/admin-login`, endpoints.login.admin);
 app.use(`/${APIVersion}/auth/verify-token`, endpoints.login.verify);
+
 app.use(`/${APIVersion}/bo/users`, endpoints.admin.manageUsers);
+app.use(`/${APIVersion}/bo/payments`, endpoints.admin.managePayments);
 app.use(`/${APIVersion}/account/add-bank`, endpoints.user.addBankAccount);
 
 // Catch-all error handler
