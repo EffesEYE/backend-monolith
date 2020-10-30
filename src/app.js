@@ -17,6 +17,11 @@ const apiMonitor = moesif({
 // Monitor API usage
 app.use(apiMonitor);
 
+// Add critical middleware
+app.use(cors());
+app.use(express.json());
+app.use(pino({ useLevel: 'error' }));
+
 // Serve basic static assets
 // In this case, just the standard favicon
 // and the EffesETE API specification
@@ -32,10 +37,6 @@ app.use('/', express.static(helloResponse));
 app.use(`/${APIVersion}`, express.static(helloResponse));
 
 // Add other critical middleware
-app.use(cors());
-app.use(express.json());
-app.use(pino({ useLevel: 'error' }));
-
 // Since we were diligent enough to adopt the
 // API-design-first best practice and now have an
 // API spec document that establishes the contract
