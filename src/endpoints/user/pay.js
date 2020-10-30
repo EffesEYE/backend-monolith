@@ -29,9 +29,12 @@ const SERVICES = {
 };
 
 const lodgePayment = async (payload) => {
-  const { email, amount, currency, sendTo, service, provider, accountToDebit } = payload;
+  const {
+    email, amount, currency, sendTo, service, provider, accountToDebit
+  } = payload;
 
-  // TODO check that this record exists before proceeding
+  // TODO
+  // check that this record exists before proceeding
   const user = await DB.User.findOne({ where: { email } });
 
   const payment = await DB.Payment.create({
@@ -67,7 +70,9 @@ const payForService = async (payload) => {
 const makePayment = async (req, res) => {
   const { email } = req.user;
   const { service } = req.params;
-  const { amount, currency, provider, sendTo, accountToDebit } = req.body;
+  const {
+    amount, currency, provider, sendTo, accountToDebit
+  } = req.body;
 
   try {
     const { serviceReqId, paymentReqId } = await payForService({

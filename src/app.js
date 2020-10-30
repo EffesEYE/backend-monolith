@@ -18,7 +18,8 @@ const apiMonitor = moesif({
 app.use(apiMonitor);
 
 // Serve basic static assets
-// In this case, just the standard icon and the API spec
+// In this case, just the standard favicon
+// and the EffesETE API specification
 const apiSpec = path.join(__dirname, 'api-spec.yaml');
 app.use(`/${APIVersion}/spec`, express.static(apiSpec));
 
@@ -29,6 +30,16 @@ app.use('/favicon.ico', express.static(ico));
 app.use(cors());
 app.use(express.json());
 app.use(pino({ useLevel: 'warn' }));
+
+// Since we were diligent enough to adopt the
+// API-design-first best practice and now have an
+// API spec document that establishes the contract
+// between this platform and all its client apps, we
+// can intercept all traffic to this platform and validate
+// the incoming request. We will automatically raise validation
+// errors for headers, params, query parameters, and the entire
+// request body, if they do not conform to what is stipulated in
+// spec.
 app.use(
   APIValidator.middleware({
     apiSpec,
@@ -54,7 +65,8 @@ app.use(`/${APIVersion}/account/add-bank`, endpoints.user.addBankAccount);
 
 // Catch-all error handler
 app.use((err, req, res, next) => {
-  // TODO log this to the API monitoring service
+  // TODO 
+  // log this to the API monitoring service
   console.log('Err Path: ', req.path);
   res.status(err.status || 500).json({
     message: err.message
