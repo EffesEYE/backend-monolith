@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Payment.belongsTo(models.User, {
-        foreignKey: 'userId'
+        foreignKey: 'user'
       });
     }
   }
@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
           return this.setDataValue('tnxdetails', JSON.stringify(value));
         }
       },
-      userId: {
+      user: {
         type: DataTypes.INTEGER,
         allowNull: false
       }

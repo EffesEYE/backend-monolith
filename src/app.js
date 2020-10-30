@@ -28,7 +28,7 @@ app.use('/favicon.ico', express.static(ico));
 // Add other critical middleware
 app.use(cors());
 app.use(express.json());
-app.use(pino({ useLevel: 'info' }));
+app.use(pino({ useLevel: 'warn' }));
 app.use(
   APIValidator.middleware({
     apiSpec,
@@ -47,6 +47,7 @@ app.use(`/${APIVersion}/auth/user-login`, endpoints.login.user);
 app.use(`/${APIVersion}/auth/admin-login`, endpoints.login.admin);
 app.use(`/${APIVersion}/auth/verify-token`, endpoints.login.verify);
 
+app.use(`/${APIVersion}/pay`, endpoints.user.handlePayments);
 app.use(`/${APIVersion}/bo/users`, endpoints.admin.manageUsers);
 app.use(`/${APIVersion}/bo/payments`, endpoints.admin.managePayments);
 app.use(`/${APIVersion}/account/add-bank`, endpoints.user.addBankAccount);

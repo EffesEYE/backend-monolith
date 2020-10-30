@@ -39,7 +39,7 @@ const addBankAccountEndpoint = async (req, res) => {
     await DB.BankAccount.create({
       nuban,
       bank: bankname,
-      userId: user.dataValues.id
+      owner: user.dataValues.id
     });
 
     res.status(201).json({

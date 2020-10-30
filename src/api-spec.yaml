@@ -32,18 +32,6 @@ paths:
         - paytv
         - payments
       responses:
-        '200':
-          description: OK. Raised when the request completed but the payment is still in progress
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentResponse'
-              examples:
-                example:
-                  value:
-                    message: request handled
-                    paymentId: 4932-458405843-53-45
-                    status: PENDING
         '201':
           description: Created. Raised when the payment completed successfully
           content:
@@ -118,7 +106,7 @@ paths:
         in: path
         required: true
         description: The service you want to pay for
-  '/{version}/pay/{service}/{paymentId}':
+  '/{version}/pay/{paymentId}/status':
     parameters:
       - schema:
           type: string
@@ -136,18 +124,6 @@ paths:
         in: path
         required: true
         description: The API version
-      - schema:
-          type: string
-          enum:
-            - airtime
-            - electricity
-            - tv
-          minLength: 2
-          maxLength: 11
-        name: service
-        in: path
-        required: true
-        description: The service the payment was for
     get:
       summary: Payment enquiry / status endpoint
       tags:
@@ -686,7 +662,7 @@ components:
           description: a message describing the status or progress of the payment
         paymentId:
           type: string
-          description: 'The id of the payment request. Very handy when the request needs to be querried in the future e.g to see if the status has changed (i.e from PENDING to SUCCEEDED), or to build a transaction history.'
+          description: The id of the payment request
         status:
           type: string
           description: 'The status of the payment request. Can be FAILED, PENDING, or SUCCEEDED'
@@ -742,6 +718,7 @@ components:
         - currency
         - provider
         - sendTo
+        - accountToDebit
     ErrorResponse:
       title: ErrorResponse
       type: object

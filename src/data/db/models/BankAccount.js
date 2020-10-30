@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       BankAccount.belongsTo(models.User, {
-        foreignKey: 'userId'
+        foreignKey: 'owner'
       });
     }
   }
@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    userId: {
+    owner: {
       type: DataTypes.INTEGER,
       allowNull: false
     }

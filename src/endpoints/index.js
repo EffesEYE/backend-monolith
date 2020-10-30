@@ -7,6 +7,7 @@ import verifyToken from './verify-token';
 import manageUsers from './admin/manage-users';
 import managePayments from './admin/manage-payments';
 import addBankAccount from './user/add-bank-account';
+import handlePayments from './user/pay';
 
 const ping = Router();
 const hello = Router();
@@ -31,6 +32,7 @@ export default {
     managePayments
   },
   user: {
-    addBankAccount
+    addBankAccount,
+    handlePayments
   }
 };

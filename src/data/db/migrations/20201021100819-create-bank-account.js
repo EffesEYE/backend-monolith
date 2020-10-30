@@ -19,13 +19,13 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      userId: {
+      owner: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           key: 'id',
-          as: 'userId',
-          model: 'Users'
+          as: 'owner',
+          model: 'users'
         }
       },
       createdAt: {

@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasMany(models.Payment, {
-        foreignKey: 'userId'
+        foreignKey: 'user'
       });
 
       User.hasMany(models.BankAccount, {
-        foreignKey: 'userId'
+        foreignKey: 'owner'
       });
     }
   }
@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       lastseen: {
+        allowNull: true,
+        type: DataTypes.DATE
+      },
+      lasttnx: {
         allowNull: true,
         type: DataTypes.DATE
       }

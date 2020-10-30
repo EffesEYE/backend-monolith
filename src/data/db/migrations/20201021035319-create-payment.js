@@ -24,13 +24,13 @@ module.exports = {
         allowNull: false
       },
       tnxdetails: Sequelize.TEXT,
-      userId: {
+      user: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           key: 'id',
-          as: 'userId',
-          model: 'Users'
+          as: 'user',
+          model: 'users'
         }
       },
       createdAt: {
