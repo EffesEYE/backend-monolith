@@ -277,9 +277,8 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PulseResponse'
+            text/html:
+              schema: {}
       operationId: get
       description: A catch-all / fall-back endpoint for the API
     post:
@@ -647,6 +646,35 @@ paths:
         in: path
         required: true
         description: The API version
+  /:
+    get:
+      summary: Top level catch-all endpoint
+      tags:
+        - catch-all
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-catch-all
+      description: Catch-all endpoint with no version info
+    post:
+      summary: Top level catch-all endpoint
+      operationId: post-catch-all
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: object
+                properties: {}
+      description: Catch-all endpoint with no version info
+      tags:
+        - catch-all
 components:
   schemas:
     PaymentResponse:
@@ -985,3 +1013,4 @@ tags:
   - name: electricity
   - name: paytv
   - name: NUBAN
+  - name: catch-all

@@ -17,6 +17,11 @@ const apiMonitor = moesif({
 // Monitor API usage
 app.use(apiMonitor);
 
+// Add critical middleware
+app.use(cors());
+app.use(express.json());
+app.use(pino({ useLevel: 'error' }));
+
 // Serve basic static assets
 // In this case, just the standard favicon
 // and the EffesETE API specification
@@ -26,11 +31,12 @@ app.use(`/${APIVersion}/spec`, express.static(apiSpec));
 const ico = path.join(__dirname, 'logo-dark.ico');
 app.use('/favicon.ico', express.static(ico));
 
-// Add other critical middleware
-app.use(cors());
-app.use(express.json());
-app.use(pino({ useLevel: 'warn' }));
+// Meta endpoints
+const helloResponse = path.join(__dirname, 'endpoints/static/hello.html');
+app.use('/', express.static(helloResponse));
+app.use(`/${APIVersion}`, express.static(helloResponse));
 
+// Add other critical middleware
 // Since we were diligent enough to adopt the
 // API-design-first best practice and now have an
 // API spec document that establishes the contract
@@ -48,8 +54,6 @@ app.use(
 );
 
 // Meta endpoints
-app.use('/', endpoints.hello);
-app.use(`/${APIVersion}`, endpoints.hello);
 app.use(`/${APIVersion}/ping`, endpoints.ping);
 
 // Route to the business of this platform!
