@@ -6,7 +6,7 @@ export const hashPswd = async (pswd) => bcrypt.hash(pswd, 10);
 
 export const checkPswd = async ({ pswd, hash }) => bcrypt.compare(pswd, hash);
 
-export const generateAuthToken = async (payload, validFor = '5m') => jwt
+export const generateAuthToken = async (payload, validFor = '35m') => jwt
   .sign(payload, process.env.JWT_SECRET, { expiresIn: validFor });
 
 export const verifyAuthToken = (token) => new Promise((resolve) => {
@@ -48,7 +48,9 @@ export const login = async (req, res, userType = 'USER') => {
     if (!user) return res.status(403).json({ message: INVALID_LOGIN_MSG });
 
     const { firstname, phone, hashedpassword } = user.dataValues;
-    const profile = { firstname, phone, hashedpassword };
+    const profile = {
+      firstname, phone, email, hashedpassword
+    };
 
     if (userType === 'USER') profile.bvn = user.dataValues.bvn;
 

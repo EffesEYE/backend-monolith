@@ -8,8 +8,6 @@ const manageUsers = async (req, res) => {
     attributes: ['accountId', 'accounttype', 'firstname', 'lastname', 'email', 'lastseen', ['createdAt', 'membersince']]
   });
 
-  console.log(users);
-
   const data = users.map(({ dataValues }) => ({ ...dataValues }));
   res.status(200).json({
     data,

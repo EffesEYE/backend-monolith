@@ -1,35 +1,30 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('payments', {
+    await queryInterface.createTable('bankaccounts', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      amount: {
-        type: Sequelize.DOUBLE,
+      nuban: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          is: /^[0-9]{11}$/i
+        }
+      },
+      bank: {
+        type: Sequelize.STRING,
         allowNull: false
       },
-      currency: {
-        type: Sequelize.ENUM('NGN', 'USD'),
-        allowNull: false
-      },
-      tnxtype: {
-        type: Sequelize.ENUM('AIRTIME', 'ELECTRICITY', 'PAYTV'),
-        allowNull: false
-      },
-      status: {
-        type: Sequelize.ENUM('PENDING', 'FAILED', 'SUCCEEDED'),
-        allowNull: false
-      },
-      tnxdetails: Sequelize.TEXT,
-      user: {
+      owner: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           key: 'id',
-          as: 'user',
+          as: 'owner',
           model: 'users'
         }
       },
@@ -44,6 +39,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('payments');
+    await queryInterface.dropTable('bankaccounts');
   }
 };
