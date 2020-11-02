@@ -9,15 +9,21 @@ module.exports = {
         {
           nuban: '9267409167',
           bank: 'GTB',
-          owner: 1
+          owner: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }, {
           nuban: '0002674983',
           bank: 'UBA',
-          owner: 1
+          owner: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }, {
           nuban: '8271670083',
           bank: 'Zenith',
-          owner: 1
+          owner: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       ],
       {}

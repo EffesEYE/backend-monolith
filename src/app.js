@@ -2,7 +2,7 @@ import cors from 'cors';
 import path from 'path';
 import express from 'express';
 import moesif from 'moesif-nodejs';
-import pino from 'express-pino-logger';
+import morgan from 'morgan';
 import * as APIValidator from 'express-openapi-validator';
 
 import endpoints from './endpoints';
@@ -20,7 +20,7 @@ app.use(apiMonitor);
 // Add critical middleware
 app.use(cors());
 app.use(express.json());
-app.use(pino({ useLevel: 'error' }));
+app.use(morgan('tiny'));
 
 // Serve basic static assets
 // In this case, just the standard favicon
@@ -71,7 +71,7 @@ app.use(`/${APIVersion}/account/add-bank`, endpoints.user.addBankAccount);
 app.use((err, req, res, next) => {
   // TODO 
   // log this to the API monitoring service
-  console.log('Err Path: ', req.path);
+  console.log(err.status, req.path, err.message);
   res.status(err.status || 500).json({
     message: err.message
   });

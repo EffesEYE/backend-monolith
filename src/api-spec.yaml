@@ -224,8 +224,8 @@ paths:
           pattern: '^\d{4}-\d{2}$'
         name: version
         in: path
-        required: true
         description: The API version
+        required: true
   '/{version}/ping':
     get:
       summary: A meta endpoint for retrieving the server's pulse
@@ -657,8 +657,7 @@ paths:
           content:
             text/html:
               schema:
-                type: object
-                properties: {}
+                type: string
       operationId: get-catch-all
       description: Catch-all endpoint with no version info
     post:

@@ -14,19 +14,25 @@ module.exports = {
           currency: 'NGN',
           tnxtype: 'AIRTIME',
           status: 'SUCCEEDED',
-          user: 1
+          user: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }, {
           amount: 5000,
           currency: 'NGN',
           tnxtype: 'PAYTV',
           status: 'SUCCEEDED',
-          user: 1
+          user: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }, {
           amount: 12000,
           currency: 'NGN',
           tnxtype: 'ELECTRICITY',
           status: 'SUCCEEDED',
-          user: 1
+          user: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       ],
       {}

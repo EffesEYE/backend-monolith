@@ -13,12 +13,14 @@ module.exports = {
           bvn: '12345678901',
           accountid: 'rythgldjfrig094745970497594',
           accounttype: 'USER',
-          hashedpassword: '5793459436tvrfgsdihsdhkdshfksdhfk7897549353',
+          hashedpassword: '$2b$10$/I6XWT4EaO24ck4Q/.XJUe1iPHSg9e49me5yXFyspIOxbNuYDZhse',
           email: 'lol@example.com',
           firstname: 'James',
           middlename: 'Baker',
           lastname: 'Bond',
-          phone: '08167352983'
+          phone: '08167352983',
+          createdAt: new Date(),
+          updatedAt: new Date()
         }, {
           bvn: '23456789012',
           accountid: 'dhfdshtorytooutoueretertper',
@@ -28,7 +30,9 @@ module.exports = {
           firstname: 'Moi',
           middlename: 'Judith',
           lastname: 'Eze',
-          phone: '08046828639'
+          phone: '08046828639',
+          createdAt: new Date(),
+          updatedAt: new Date()
         }, {
           bvn: '34567890123',
           accountid: 'gjlidsfhgi567045584843076674',
@@ -38,7 +42,9 @@ module.exports = {
           firstname: 'Joi',
           middlename: 'Mordy',
           lastname: 'Ekene',
-          phone: '09175849274'
+          phone: '09175849274',
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
 
       ],

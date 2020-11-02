@@ -87,7 +87,7 @@ const makePayment = async (req, res) => {
 
     res.status(201).json({
       status: 'SUCCEEDED',
-      paymentId: paymentReqId,
+      paymentId: `${paymentReqId}`,
       message: 'payment completed',
       details: { serviceReqId }
     });
