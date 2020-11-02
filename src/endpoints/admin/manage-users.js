@@ -5,7 +5,7 @@ import { requiresAuth } from '../../commons/auth';
 
 const manageUsers = async (req, res) => {
   const users = await DB.User.findAll({
-    attributes: ['accountId', 'accounttype', 'firstname', 'lastname', 'email', 'lastseen', ['createdAt', 'membersince']]
+    attributes: ['accountid', 'accounttype', 'firstname', 'lastname', 'email', 'lastseen', ['createdAt', 'membersince']]
   });
 
   const data = users.map(({ dataValues }) => ({ ...dataValues }));
