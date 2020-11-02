@@ -3,5 +3,6 @@ module.exports = {
   rootDir: 'tests',
   testRegex: ['.spec.js$', '.test.js$'],
   coverageDirectory: './coverage',
-  testEnvironment: 'node'
+  testEnvironment: 'node',
+  coverageReporters: ['json-summary', 'lcov']
 };

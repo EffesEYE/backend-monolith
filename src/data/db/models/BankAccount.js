@@ -33,7 +33,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'BankAccount'
+    modelName: 'BankAccount',
+    tableName: 'bankaccounts'
   });
   return BankAccount;
 };
