@@ -1,0 +1,129 @@
+# This provides a step-by-step guide to use/test the EffesEYE MVP Platform
+# To make a request to the server, enure the server is running
+# locally (run npm start:devmode from within this project) or you can change all
+# use of http://localhost:8181/ to http://effeseye-api.herokuapp.com/
+# Using http://effeseye-api.herokuapp.com/ is the path to zero/least setup
+# 
+# If you ever need to reset the database (e.g you cannot register more than 
+# one user with chaluwa@gmail.com email), run: 
+# 
+# npm run devdb:reset
+#
+# Follow the ordered steps below and click the "Send Request" link just
+# beneath the instruction for each step
+# A request will be made to the server and the response, including
+# data, headers e.t.c will be displayed into a split window on the rightside of VSCode
+
+
+### Step 1: Register as admin by using the whitelisted chaluwa@gmail.com email address.
+
+POST http://localhost:8181/2020-10/register
+Content-Type: application/json
+
+{
+    "bvn":  "12345678901",
+    "pswd": "pa55W0rd",
+    "email": "chaluwa@gmail.com"
+}
+
+### Step 2: Login as admin. The response will include a token (authToken)
+### that expires after 30 minutes. Copy the authToken from the response 
+## payload on the right of the screen
+
+POST http://localhost:8181/2020-10/auth/admin-login
+Content-Type: application/json
+
+{
+    "pswd": "pa55W0rd",
+    "email": "chaluwa@gmail.com"
+}
+
+### Step 3: As admin, view users on the EffesEYE platform
+### Replace <TOKEN> below with the token from step 2 above
+### An invlid or absent token will result in a 401 HTTP ststus error code
+
+GET http://localhost:8181/2020-10/bo/users
+Content-Type: application/json
+Authorization: Bearer <TOKEN>
+
+### Step 4: As admin, view payments made via the EffesEYE platform
+### Replace <TOKEN> below with the token from step 2 above
+### An invlid or absent token will result in a 401 HTTP ststus 
+### error code, which you are welcome to check
+
+GET http://localhost:8181/2020-10/bo/payments
+Content-Type: application/json
+Authorization: Bearer <TOKEN>
+
+### Step 5: Register as user by providing a BVN and login details
+### You should get a warm email from Evie, our Senior Product Marketing Manager! 
+
+POST http://localhost:8181/2020-10/register
+Content-Type: application/json
+
+{
+    "bvn":  "12345678901",
+    "pswd": "pa55W0rd",
+    "email": "charles.odili@fsi.com"
+}
+
+### Step 6: Login as a user. The response will include a token (authToken)
+### that expires after 30 minutes. Copy the authToken from the response 
+## payload on the right of the screen
+
+POST http://localhost:8181/2020-10/auth/user-login
+Content-Type: application/json
+
+{
+    "pswd": "pa55W0rd",
+    "email": "charles.odili@fsi.com"
+}
+
+### Step 7: Verify and add a bank account to your EffesEYE user profile
+### Your payments will be linked/sourced from these accounts
+### Replace <TOKEN> below with the token from step 6 above
+### An invlid or absent token will result in a 401 HTTP ststus 
+### error code, which you are welcome to check
+
+POST http://localhost:8181/2020-10/account/add-bank
+Content-Type: application/json
+Authorization: Bearer <TOKEN>
+
+{
+    "nuban": "0037514056",
+    "bankname": "UBA"
+}
+
+### Step 8: Pay for airtime, tv subscription, or electricity via the EffesEYE platform
+### Set 'accountToDebit' to the NUBAN account number you regitered in step 7
+### When paying for airtime, set 'sendTo' to the phone number you want to recharge,
+### you are required to prefix the phone number with your country phone code (+234 for Nigeria)
+### See https://effeseye-api-docs.netlify.app/#operation/post-airtime-recharge for more info
+### Replace <TOKEN> below with the token from step 6 above
+### An invlid or absent token will result in a 401 HTTP ststus 
+### error code, which you are welcome to check
+### A succesful payment transaction returns a paymentId which 
+### can be used later to query the status/details of the payment
+
+POST http://localhost:8181/2020-10/pay/airtime
+Content-Type: application/json
+Authorization: Bearer <TOKEN>
+
+{
+    "amount": 750,
+    "currency": "NGN",
+    "provider": "airtel",
+    "sendTo": "+2348138145472",
+    "accountToDebit": "0037514056"
+}
+
+### Step 9: Query the payment you made in step 8
+### All you have to do is query it using the paymentId returned when the payment was made
+### Replace <PAYMENT-ID> below whit the paymentId from step 8
+### Replace <TOKEN> below with the token from step 6 above
+### An invlid or absent token will result in a 401 HTTP ststus 
+### error code, which you are welcome to check
+
+GET http://localhost:8181/2020-10/pay/<PAYMENT-ID>/status
+Content-Type: application/json
+Authorization: Bearer <TOKEN>

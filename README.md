@@ -27,16 +27,17 @@ See more analytics info on our [Moesif dashboard](https://www.moesif.com/wrap/ap
 1.  clone the repo: `git clone git@github.com:EffesEYE/backend-monolith.git`
 2.  cd into the repo folder: `cd backend-monolith`
 3.  run `npm install`. Requires working Nodejs and npm installations
-4.  run `npm start:devmode` to start the local Node/Express server on port `8181`
+4.  run `npm serve:devmode` to start the local Node/Express server on port `8181`
 5.  Open the project in VSCode and install the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension
-6.  Open the request.test file in the root of the project folder and follow the documented steps
+6.  Open the `effeseye.rest` file in the root of the project folder and follow the documented steps
     *   you will be able to register new users, login as a user or admin, and make payments
     *   you can occasionally log into the EffesEYE [Admin app](https://effeseye-admin.netlify.app/) to see that your interactions are properly registered and visible 
 
-## Currently Unmet Requirements
+## Currently Unmet Requirements/Expectations
 
 1.  Use of TypeScript. This project is currently built with vanila Javascript and can be progressively migrated to TypeScript
 2.  Support for SOAP. This can be added as an additional communication / transport interface, but we currently only implemented REST/JSON
+3.  There's no support for deleting records.
 
 ## Tests & Coverage Reporting
 
