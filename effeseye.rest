@@ -64,7 +64,7 @@ Content-Type: application/json
 {
     "bvn":  "12345678901",
     "pswd": "pa55W0rd",
-    "email": "charles.odili@fsi.com"
+    "email": "ebun@fsi.com"
 }
 
 ### Step 6: Login as a user. The response will include a token (authToken)
@@ -76,7 +76,7 @@ Content-Type: application/json
 
 {
     "pswd": "pa55W0rd",
-    "email": "charles.odili@fsi.com"
+    "email": "ebun@fsi.com"
 }
 
 ### Step 7: Verify and add a bank account to your EffesEYE user profile
