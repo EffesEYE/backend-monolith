@@ -35,15 +35,13 @@ See more analytics info on our [Moesif dashboard](https://www.moesif.com/wrap/ap
 
 ## Currently Unmet Requirements/Expectations
 
-1.  Use of TypeScript. This project is currently built with vanila Javascript and can be progressively migrated to TypeScript
+1.  Use of TypeScript. This project is currently built with Javascript (ES6) and can be progressively migrated to TypeScript
 2.  Support for SOAP. This can be added as an additional communication / transport interface, but we currently only implemented REST/JSON
-3.  There's no support for deleting records.
+3.  There's no support for deleting records. This means we have not implemented the `D` in `CRUD`
 
 ## Tests & Coverage Reporting
 
-Tests are location in the `./tests` folder. While currently not exhaustive (not every API endpoint has a test), we've managed to hit a high test coverage (over 90%) by test the endpoints that are of more value to users, and they coincidentally have the most code execution path.
-
-Tests were ran locally against a PostgresSQL database (needed to cut down latency) and the `--coverage` flag for Jest reports coverage for our tests. The coverage files in `./tests/coverage` are then used by the `make-coverage-badge` npm module to generate a coverage badge which we have displayed galantly in this README file.
+Tests are in the `./tests` folder. While currently not exhaustive (not every API endpoint has a test), we've managed to hit a high test coverage (over 90%) by testing the endpoints that are of more value to users, and they coincidentally have the most code execution path.
 
 ## There's More
 
